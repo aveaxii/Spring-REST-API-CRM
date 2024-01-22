@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add new user</title>
+</head>
+<body>
+    <form th:method="POST" th:action="@{/admin}" th:object="${user}">
+        <label for="name">Enter name: </label>
+        <input type="text" th:field="*{name}" id="name"/>
+
+        <br/>
+
+        <label for="surname">Enter surname: </label>
+        <input type="text" th:field="*{surname}" id="surname"/>
+
+        <br/>
+
+        <label for="birthYear">Enter birth year: </label>
+        <input type="number" th:field="*{birthYear}" id="birthYear"/>
+
+        <br/>
+
+        <label for="password">Enter password: </label>
+        <input type="text" th:field="*{password}" id="password"/>
+
+        <input type="submit" value="Create!"/>
+    </form>
+
+    <br/>
+
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+    </body>
+</html>

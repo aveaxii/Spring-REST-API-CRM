@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All users</title>
+</head>
+<body>
+<h2>All users:</h2>
+
+    <ul>
+    <!-- Thymeleaf iteration to display each item in the list -->
+        <li th:each="user : ${allUsers}">
+            <a th:href="@{'admin/' + ${user.id}}">
+                <span th:text="${user.id}"></span>
+                <span th:text="${user.name}"></span>
+                <span th:text="${user.surname}"></span>
+                <span th:text="${user.birthYear}"></span>
+            </a>
+
+            <br/>
+        </li>
+    </ul>
+
+    <form th:action="@{admin/deleteAll}" th:method="post">
+        <input type="submit" value="Delete all"/>
+    </form>
+
+    <br/>
+
+    <a th:href="@{/admin/add}">
+        <button>Add User</button>
+    </a>
+
+    <br/>
+
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+</body>
+</html>
