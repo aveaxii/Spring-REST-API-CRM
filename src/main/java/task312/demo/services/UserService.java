@@ -13,6 +13,7 @@ public interface UserService {
     void delete(Long id);
     void deleteAll();
     User findByUsername(String username);
+    User findByEmail(String email);
     boolean isUserAdmin(String username);
 }
 

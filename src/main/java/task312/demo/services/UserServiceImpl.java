@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        Optional<User> user = userRepository.findByName(username);
+        Optional<User> user = userRepository.findByEmail(username);
 
         if (user.isPresent()) {
             return user.get();
@@ -76,8 +76,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+
+        if (user.isPresent()) {
+            return user.get();
+        } else {
+            throw new UsernameNotFoundException(email);
+        }
+    }
+
+
+    @Override
     public boolean isUserAdmin(String username) {
-        Optional<User> user = userRepository.findByName(username);
+        Optional<User> user = userRepository.findByEmail(username);
 
         if (user.isPresent()) {
            return user.get().getRoles().stream().anyMatch(role -> "ROLE_ADMIN".equals(role.getName()));
