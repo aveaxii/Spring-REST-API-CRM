@@ -88,11 +88,11 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public boolean isUserAdmin(String username) {
-        Optional<User> user = userRepository.findByEmail(username);
+    public boolean isUserAdmin(User user) {
+        Optional<User> userToCheck = userRepository.findByEmail(user.getEmail());
 
-        if (user.isPresent()) {
-           return user.get().getRoles().stream().anyMatch(role -> "ROLE_ADMIN".equals(role.getName()));
+        if (userToCheck.isPresent()) {
+           return userToCheck.get().getRoles().stream().anyMatch(role -> "ROLE_ADMIN".equals(role.getName()));
         } else {
             return false;
         }

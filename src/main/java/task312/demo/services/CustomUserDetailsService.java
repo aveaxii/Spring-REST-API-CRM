@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import task312.demo.models.User;
 import task312.demo.repositories.UserRepository;
-import task312.demo.securities.CustomUserDetails;
 
 import java.util.Optional;
 
@@ -29,6 +28,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
-        return new CustomUserDetails(user.get());
+        return user.get();
     }
 }

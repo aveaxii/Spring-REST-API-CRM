@@ -1,6 +1,9 @@
 package task312.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,8 +14,12 @@ import task312.demo.models.User;
 import task312.demo.services.RoleService;
 import task312.demo.services.UserService;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/admin")
@@ -31,15 +38,41 @@ public class AdminController {
 
     @GetMapping("")
     public String allUsers(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        User user = userService.findByEmail(userDetails.getUsername());
+
+        Long currentUserId = user.getId();
+
+        model.addAttribute("currentUserId", currentUserId);
+        model.addAttribute("user", user);
         model.addAttribute("allUsers", userService.findAll());
         return "admin/users";
     }
 
-    @GetMapping("/{id}")
-    public String user(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("user", userService.findById(id));
+//    @GetMapping("/{id}")
+//    public String user(@PathVariable("id") Long id, Model model) {
+//        model.addAttribute("user", userService.findById(id));
+//        return "admin/user";
+//    }
+
+    @GetMapping("/user")
+    public String getUser(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        User user = userService.findByEmail(userDetails.getUsername());
+
+        Long currentUserId = user.getId();
+
+        model.addAttribute("currentUserId", currentUserId);
+        model.addAttribute("user", user);
         return "admin/user";
     }
+
 
     @GetMapping("/add")
     public String addUser(@ModelAttribute("user") User user) {
@@ -81,9 +114,13 @@ public class AdminController {
         existingUser.setName(user.getName());
         existingUser.setSurname(user.getSurname());
         existingUser.setBirthYear(user.getBirthYear());
+        existingUser.setEmail(user.getEmail());
 
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
             existingUser.setPassword(currentPassword);
+        } else {
+            String encryptedPassword = passwordEncoder.encode(user.getPassword());
+            existingUser.setPassword(encryptedPassword);
         }
 
         userService.update(id, existingUser);

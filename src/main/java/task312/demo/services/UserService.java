@@ -14,6 +14,6 @@ public interface UserService {
     void deleteAll();
     User findByUsername(String username);
     User findByEmail(String email);
-    boolean isUserAdmin(String username);
+    boolean isUserAdmin(User user);
 }
 

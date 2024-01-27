@@ -29,10 +29,13 @@ public class UserController {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        User user = userService.findByUsername(userDetails.getUsername());
+        User user = userService.findByEmail(userDetails.getUsername());
 
+        Long currentUserId = user.getId();
+
+        model.addAttribute("currentUserId", currentUserId);
         model.addAttribute("user", user);
 
-        return "pages/user";
+        return userService.isUserAdmin(user) ? "admin/user" : "userPages/user";
     }
 }
