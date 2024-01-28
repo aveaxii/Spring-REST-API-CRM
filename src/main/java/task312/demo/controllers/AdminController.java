@@ -52,12 +52,6 @@ public class AdminController {
         return "admin/users";
     }
 
-//    @GetMapping("/{id}")
-//    public String user(@PathVariable("id") Long id, Model model) {
-//        model.addAttribute("user", userService.findById(id));
-//        return "admin/user";
-//    }
-
     @GetMapping("/user")
     public String getUser(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -75,12 +69,20 @@ public class AdminController {
 
 
     @GetMapping("/add")
-    public String addUser(@ModelAttribute("user") User user) {
+    public String getAddUser(@ModelAttribute("user") User userToCreate, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        User user = userService.findByEmail(userDetails.getUsername());
+
+        model.addAttribute("adminUser", user);
+
         return "admin/add";
     }
 
-    @PostMapping("")
-    public String create(@ModelAttribute("user") User user) {
+    @PostMapping("/add")
+    public String postCreateUser(@ModelAttribute("user") User user) {
         String encryptedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encryptedPassword);
 
@@ -99,14 +101,8 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/{id}/edit")
-    public String edit(Model model, @PathVariable("id") Long id) {
-        model.addAttribute("user", userService.findById(id));
-        return "admin/edit";
-    }
-
     @PostMapping("/{id}")
-    public String update(@ModelAttribute User user, @PathVariable("id") Long id) {
+    public String postUpdate(@ModelAttribute User user, @PathVariable("id") Long id) {
         User existingUser = userService.findById(id);
 
         String currentPassword = existingUser.getPassword();
