@@ -39,7 +39,11 @@ $(document).ready(function() {
     });
 
     $('#addUserTab').click(function(e) {
-       e.preventDefault();
+        e.preventDefault();
+
+        $('.nav-link').removeClass('active');
+
+        $(this).addClass('active');
 
         $('#userTableInfoCard').hide();
         $('#addNewUserCard').show();
@@ -126,10 +130,49 @@ $(document).ready(function() {
 
 
     // Delete user
-        // 1 - Implement delete modal function
-        // 2 - implement even on click and passing user id to delete modal
-        // 3 - implement delete user function
-        // 4 - implement event on click for delete (inside modal) button
+    function openDeleteModal(userId) {
+        $.ajax({
+            url: '/api/admin/' + userId,
+            type: 'GET',
+            dataType: 'json',
+            success: function (user) {
+              $('#delete_id').val(user.id);
+                $('#delete_name').val(user.name);
+                $('#delete_surname').val(user.surname);
+                $('#delete_birthYear').val(user.birthYear);
+                $('#delete_email').val(user.email);
+
+                $('#delete_user_modal').modal('show');
+            },
+            error: function (error) {
+                console.error('Error fetching user details:', error);
+            }
+        });
+    }
+
+    $(document).on('click', '.delete-button', function () {
+        let userId = $(this).closest('tr').find('td:first').text();
+        openDeleteModal(userId);
+    });
+
+    function deleteUser(userId) {
+        $.ajax({
+            url: '/api/admin/' + userId,
+            type: 'DELETE',
+            success: function (response) {
+                $('#delete_user_modal').modal('hide');
+                getAllUsers();
+            },
+            error: function (error) {
+                console.error('Error deleting user:', error);
+            }
+        });
+    }
+
+    $('#delete_user_button').click(function () {
+        let userId = $('#delete_id').val();
+        deleteUser(userId);
+    });
     // Delete user
 
 
@@ -159,7 +202,7 @@ $(document).ready(function() {
                     row.append(editBlock);
 
 
-                    let deleteButton = $('<button type="button" class="btn btn-danger">Delete</button>');
+                    let deleteButton = $('<button type="button" class="btn btn-danger delete-button">Delete</button>');
                     let deleteBlock = $('<td></td>').append(deleteButton);
                     row.append(deleteBlock);
 
@@ -178,53 +221,61 @@ $(document).ready(function() {
     }
     // User table
 
+    // Add new user
+    $('#addUser_roles').change(function() {
+        selectedRole = $('#addUser_roles option:selected').val().toUpperCase();
+    });
+
+    $('#add_user_form').submit(function (e) {
+        e.preventDefault();
+
+        let selectedRoleId = ROLE_MAPPER[selectedRole];
+
+        let newUserFormData = {
+            name: $('#addUser_name').val(),
+            surname: $('#addUser_surname').val(),
+            birthYear: $('#addUser_birthYear').val(),
+            email: $('#addUser_email').val(),
+            password: $('#addUser_password').val(),
+            roles: [
+                {
+                    id: selectedRoleId,
+                    name: 'ROLE_' + selectedRole,
+                    authority: 'ROLE_' + selectedRole
+                }
+            ]
+        };
+
+        $.ajax({
+            url: '/api/admin/add',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(newUserFormData),
+            success: function (response) {
+                $('.nav-link').removeClass('active');
+
+                $('#adminTab').addClass('active');
+
+                $('#addNewUserCard').hide();
+                $('#userTableInfoCard').show();
+                getAllUsers();
+
+                $('#addUser_name').val('');
+                $('#addUser_surname').val('');
+                $('#addUser_birthYear').val('');
+                $('#addUser_email').val('');
+                $('#addUser_password').val('');
+                $('#addUser_roles').val(undefined);
+            },
+            error: function (error) {
+                console.error('Error adding new user:', error);
+            }
+        });
+
+    });
+
+
+    // Add new user
 
     getAllUsers();
-
-
-    // Sidebar
-    // $('#sidebarAdminRole').click(function(e) {
-    //     e.preventDefault();
-    //
-    //     $('.list-group-item-action').removeClass('active');
-    //
-    //     $(this).addClass('active');
-    //
-    //     $.ajax({
-    //         url: '/admin/admin-content-card-sidebar',
-    //         type: 'GET',
-    //         dataType: 'html',
-    //         success: function(data) {
-    //             $('#customContent').html(data);
-    //
-    //             getAllUsers();
-    //         },
-    //         error: function() {
-    //             console.log('Error loading admin content');
-    //         }
-    //     });
-    // });
-    //
-    // $('#sidebarUserRole').click(function(e) {
-    //     e.preventDefault();
-    //
-    //     $('.list-group-item-action').removeClass('active');
-    //
-    //     $(this).addClass('active');
-    //
-    //     $.ajax({
-    //         url: '/admin/user-content-sidebar',
-    //         type: 'GET',
-    //         dataType : 'html',
-    //         success: function(data) {
-    //             $('#customContent').html(data);
-    //
-    //            getUserTableInfo();
-    //         },
-    //         error: function() {
-    //             console.log('Error loading user content');
-    //         }
-    //     });
-    // });
-    // Sidebar
 });

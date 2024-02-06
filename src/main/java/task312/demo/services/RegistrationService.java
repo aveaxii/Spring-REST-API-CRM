@@ -26,13 +26,6 @@ public class RegistrationService {
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
-
-    public RegistrationService(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
-        this.userRepository = userService.getUserRepository();
-        this.roleRepository = roleService.getRoleRepository();
-        this.passwordEncoder = passwordEncoder;
-    }
-
     @Transactional
     public void register(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());

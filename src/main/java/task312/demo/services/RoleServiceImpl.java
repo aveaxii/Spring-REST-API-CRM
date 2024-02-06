@@ -6,7 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import task312.demo.exceptions.RoleAlreadyExistException;
 import task312.demo.exceptions.RoleNotFoundException;
 import task312.demo.models.Role;
-import task312.demo.models.User;
 import task312.demo.repositories.RoleRepository;
 
 import java.util.List;

@@ -22,14 +22,12 @@ public class RestAdminController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
-    private final RegistrationService registrationService;
 
     @Autowired
     public RestAdminController(UserService userService, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.roleService = roleService;
-        this.registrationService = new RegistrationService(userService, roleService, passwordEncoder);
     }
 
     @GetMapping("/allUsers")
@@ -44,7 +42,20 @@ public class RestAdminController {
 
     @PostMapping("/add")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        registrationService.register(user); // TEST
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        Collection<Role> roles = new ArrayList<>();
+        if (user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN"))) {
+            Role adminRole = roleService.findByName("ROLE_ADMIN");
+            roles.add(adminRole);
+        }
+        Role userRole = roleService.findByName("ROLE_USER");
+        roles.add(userRole);
+
+        user.setRoles(roles);
+
+        userService.save(user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }

@@ -33,7 +33,7 @@ public class SecurityConfig {
                     http    .csrf(csrf -> csrf.disable())
                             .authorizeHttpRequests((auth) -> auth
                             .requestMatchers("/auth/login", "/auth/registration", "/error").permitAll()
-                            .requestMatchers("/admin/**").hasRole("ADMIN")
+                            .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
                             .anyRequest().hasAnyRole("USER", "ADMIN")
                             )
                             .formLogin((login) -> login
@@ -69,6 +69,6 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/resouces/**","/static/**","/css/**");
+        return (web) -> web.ignoring().requestMatchers("/resouces/**","/static/**","/css/**","/js/**");
     }
 }
