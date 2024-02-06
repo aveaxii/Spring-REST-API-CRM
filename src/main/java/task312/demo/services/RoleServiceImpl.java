@@ -67,35 +67,8 @@ public class RoleServiceImpl implements RoleService {
         }
     }
 
-    @Override
-    @Transactional
-    public void assignRoleToUser(Long userId, Long roleId) {
-        User user = userService.findById(userId);
-        Optional<Role> role = roleRepository.findById(roleId);
 
-        if (role.isPresent()) {
-            Role roleToAdd = role.get();
-            user.getRoles().add(roleToAdd);
-        } else {
-            throw new RoleNotFoundException(roleId);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void removeAllUsersFromRole(Long roleId) {
-        Optional<Role> role = roleRepository.findById(roleId);
-
-        if (role.isPresent()) {
-            Role roleToAdd = role.get();
-            roleToAdd.getUsers().clear();
-        }
-    }
-
-    @Override
-    public void removeAllRolesFromUser(Long userId) {
-        User user = userService.findById(userId);
-
-        user.getRoles().clear();
+    public RoleRepository getRoleRepository() {
+        return roleRepository;
     }
 }

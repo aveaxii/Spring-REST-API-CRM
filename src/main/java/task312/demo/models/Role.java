@@ -42,14 +42,6 @@ public class Role implements GrantedAuthority {
         this.name = name;
     }
 
-    public Collection<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Collection<User> users) {
-        this.users = users;
-    }
-
     @Override
     public String getAuthority() {
         return name;

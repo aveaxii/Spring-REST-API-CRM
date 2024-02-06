@@ -67,3 +67,22 @@ a {
 .form-label {
     font-weight: bold;
 }
+
+.edit-button {
+    color: white;
+}
+
+.edit-button:hover {
+    color: white;
+    text-decoration: none;
+}
+
+#addNewUserCard {
+    .form-control, .form-select {
+        width: 25rem;!important;
+    }
+
+    .form-control {
+        width: 25rem;!important;
+    }
+}

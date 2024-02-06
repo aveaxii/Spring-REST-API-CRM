@@ -41,7 +41,6 @@ public class SecurityConfig {
                                     .loginProcessingUrl("/process_login")
                                     .usernameParameter("email")
                                             .successHandler(successUserHandler)
-                                            .failureUrl("/auth/login?error")
                             )
                             .logout(logout -> logout
                                     .logoutSuccessUrl("/auth/login")

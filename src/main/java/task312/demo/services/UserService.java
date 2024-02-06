@@ -2,6 +2,7 @@ package task312.demo.services;
 
 
 import task312.demo.models.User;
+import task312.demo.repositories.UserRepository;
 
 import java.util.List;
 
@@ -12,8 +13,8 @@ public interface UserService {
     void update(Long id, User user);
     void delete(Long id);
     void deleteAll();
-    User findByUsername(String username);
     User findByEmail(String email);
     boolean isUserAdmin(User user);
+    UserRepository getUserRepository();
 }
 

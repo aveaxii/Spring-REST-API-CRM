@@ -53,26 +53,17 @@ public class UserServiceImpl implements UserService {
     public void delete(Long id) {
         Optional<User> userToDelete = userRepository.findById(id);
 
-        //        userToDelete.ifPresent(user -> user.getRoles().clear());
-
-        userRepository.deleteById(id);
+        if (userToDelete.isPresent()) {
+            userRepository.delete(userToDelete.get());
+        } else {
+            throw new EntityNotFoundException();
+        }
     }
 
     @Override
     @Transactional
     public void deleteAll() {
         userRepository.deleteAll();
-    }
-
-    @Override
-    public User findByUsername(String username) {
-        Optional<User> user = userRepository.findByEmail(username);
-
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new UsernameNotFoundException(username);
-        }
     }
 
     @Override
@@ -86,7 +77,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
     @Override
     public boolean isUserAdmin(User user) {
         Optional<User> userToCheck = userRepository.findByEmail(user.getEmail());
@@ -98,4 +88,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    public UserRepository getUserRepository() {
+        return userRepository;
+    }
 }

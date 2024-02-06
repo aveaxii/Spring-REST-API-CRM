@@ -16,14 +16,20 @@ import java.util.Optional;
 @Service
 public class RegistrationService {
 
-    private final UserRepository userService;
+    private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public RegistrationService(UserRepository userService, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
+    public RegistrationService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public RegistrationService(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
+        this.userRepository = userService.getUserRepository();
+        this.roleRepository = roleService.getRoleRepository();
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -40,6 +46,6 @@ public class RegistrationService {
             throw new RoleNotFoundException("ROLE_USER");
         }
 
-        userService.save(user);
+        userRepository.save(user);
     }
 }
