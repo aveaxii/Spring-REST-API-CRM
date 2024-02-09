@@ -13,25 +13,4 @@ public class AdminController {
         return "adminPages/users";
     }
 
-    // Content pages
-
-    @GetMapping("/user-content-sidebar")
-    public String getUserSidebarContentPage() {
-        return "contentPages/user-content-sidebar";
-    }
-
-    @GetMapping("/admin-content-card-sidebar")
-    public String getAdminSidebarContentPage() {
-        return "contentPages/admin-content-card-sidebar";
-    }
-
-    @GetMapping("/add-content-card-tab")
-    public String getAddTabContentPage() {
-        return "contentPages/add-content-card-tab";
-    }
-
-    @GetMapping("/admin-content-card-tab")
-    public String getAdminContentCardPage() {
-        return "contentPages/admin-content-card-tab";
-    }
 }
