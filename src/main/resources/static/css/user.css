@@ -31,7 +31,8 @@ a {
     font-weight: normal !important;
 }
 
-.user-row .sidebar {
+/*.user-row */
+.sidebar {
     height: 100vh;
 }
 

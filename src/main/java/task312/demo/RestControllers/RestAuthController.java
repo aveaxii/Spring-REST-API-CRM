@@ -19,7 +19,7 @@ public class RestAuthController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<User> doRegistration(@RequestBody User user) {
+    public ResponseEntity<User> registerUser(@RequestBody User user) {
         try {
             registrationService.register(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(user);

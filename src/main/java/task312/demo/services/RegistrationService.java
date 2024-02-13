@@ -36,7 +36,9 @@ public class RegistrationService {
         if (userRole.isPresent()) {
             user.setRoles(List.of(userRole.get()));
         } else {
-            throw new RoleNotFoundException("ROLE_USER");
+            Role role = new Role("ROLE_USER");
+            roleRepository.save(role);
+            user.setRoles(List.of(role));
         }
 
         userRepository.save(user);

@@ -179,7 +179,7 @@ $(document).ready(function() {
     // User table
     function getAllUsers() {
         $.ajax({
-            url: "/api/admin/allUsers",
+            url: "/api/admin/users",
             type: "GET",
             dataType: "json",
             success: function (data) {
@@ -247,7 +247,7 @@ $(document).ready(function() {
         };
 
         $.ajax({
-            url: '/api/admin/add',
+            url: '/api/admin/add-user',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(newUserFormData),
