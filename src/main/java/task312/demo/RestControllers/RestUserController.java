@@ -25,12 +25,6 @@ public class RestUserController {
 
     @GetMapping("")
     public ResponseEntity<User> getUserProfile() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        User user = userService.findByEmail(userDetails.getUsername());
-
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userService.getUserProfile());
     }
 }

@@ -1,6 +1,6 @@
 $(document).ready(function() {
     let currentUserId;
-    let selectedRole;
+    let selectedRoles = [];
 
     const ROLE_MAPPER = {
         'ADMIN' : 1,
@@ -54,7 +54,7 @@ $(document).ready(function() {
     // Edit user
     function openEditModal(userId) {
         $.ajax({
-            url: '/api/admin/' + userId,
+            url: '/api/admin/user/' + userId,
             type: 'GET',
             dataType: 'json',
             success: function (user) {
@@ -66,7 +66,19 @@ $(document).ready(function() {
                 $('#edit_email').val(user.email);
 
                 $('#edit_roles').change(function() {
-                    selectedRole = $('#edit_roles option:selected').val().toUpperCase();
+                    let selectedCount = $('#edit_roles option:selected').length;
+
+                    selectedRoles = [];
+
+                    if (selectedCount > 1) {
+                        // multiple choice
+                        $('#edit_roles option:selected').each(function(){
+                            selectedRoles.push($(this).val());
+                        });
+                    } else if (selectedCount === 1) {
+                        // single choice
+                        selectedRoles.push($('#edit_roles option:selected').val());
+                    }
                 });
 
                 $('#edit_user_modal').modal('show');
@@ -85,14 +97,14 @@ $(document).ready(function() {
 
     function updateUser(userId, updatedUserData) {
         $.ajax({
-            url: '/api/admin/' + userId,
+            url: '/api/admin/user/' + userId,
             type: 'PATCH',
             contentType: 'application/json',
             data: JSON.stringify(updatedUserData),
             success: function (response) {
                 $('#edit_user_modal').modal('hide');
 
-                if (parseInt(userId) === currentUserId && selectedRole === 'USER') {
+                if (parseInt(userId) === currentUserId && selectedRoles.includes('USER')) {
                     window.location.href = '/logout';
                 } else {
                     getAllUsers();
@@ -106,22 +118,24 @@ $(document).ready(function() {
 
     $('#edit_user_button').click(function () {
         let userId = $('#edit_id').val();
-        let selectedRoleId = ROLE_MAPPER[selectedRole];
-
         let updatedUserData = {
             name: $('#edit_name').val(),
             surname: $('#edit_surname').val(),
             birthYear: $('#edit_birthYear').val(),
             email: $('#edit_email').val(),
             password: $('#edit_password').val(),
-            roles: [
-                {
-                    id: selectedRoleId,
-                    name: 'ROLE_' + selectedRole,
-                    authority: 'ROLE_' + selectedRole
-                }
-            ]
+            roles: []
         };
+
+        selectedRoles.forEach(function (selectedRole) {
+           let selectedRoleId = ROLE_MAPPER[selectedRole];
+
+           updatedUserData.roles.push({
+              id: selectedRoleId,
+              name: 'ROLE_' + selectedRole,
+              authority: 'ROLE_' + selectedRole
+           });
+        });
 
         updateUser(userId, updatedUserData);
     });
@@ -132,7 +146,7 @@ $(document).ready(function() {
     // Delete user
     function openDeleteModal(userId) {
         $.ajax({
-            url: '/api/admin/' + userId,
+            url: '/api/admin/user/' + userId,
             type: 'GET',
             dataType: 'json',
             success: function (user) {
@@ -157,11 +171,16 @@ $(document).ready(function() {
 
     function deleteUser(userId) {
         $.ajax({
-            url: '/api/admin/' + userId,
+            url: '/api/admin/user/' + userId,
             type: 'DELETE',
             success: function (response) {
+                if (parseInt(userId) === currentUserId) {
+                    window.location.href = '/logout';
+                } else {
+                    getAllUsers();
+                }
+
                 $('#delete_user_modal').modal('hide');
-                getAllUsers();
             },
             error: function (error) {
                 console.error('Error deleting user:', error);
@@ -223,13 +242,26 @@ $(document).ready(function() {
 
     // Add new user
     $('#addUser_roles').change(function() {
-        selectedRole = $('#addUser_roles option:selected').val().toUpperCase();
+        selectedRoles = [];
+        $('#addUser_roles option:selected').each(function(){
+            let selectedCount = $('#addUser_roles option:selected').length;
+
+            selectedRoles = [];
+
+            if (selectedCount > 1) {
+                // multiple choice
+                $('#addUser_roles option:selected').each(function(){
+                    selectedRoles.push($(this).val());
+                });
+            } else if (selectedCount === 1) {
+                // single choice
+                selectedRoles.push($('#addUser_roles option:selected').val());
+            }
+        });
     });
 
     $('#add_user_form').submit(function (e) {
         e.preventDefault();
-
-        let selectedRoleId = ROLE_MAPPER[selectedRole];
 
         let newUserFormData = {
             name: $('#addUser_name').val(),
@@ -237,14 +269,17 @@ $(document).ready(function() {
             birthYear: $('#addUser_birthYear').val(),
             email: $('#addUser_email').val(),
             password: $('#addUser_password').val(),
-            roles: [
-                {
-                    id: selectedRoleId,
-                    name: 'ROLE_' + selectedRole,
-                    authority: 'ROLE_' + selectedRole
-                }
-            ]
+            roles: []
         };
+
+        selectedRoles.forEach(function(selectedRole) {
+            let selectedRoleId = ROLE_MAPPER[selectedRole];
+            newUserFormData.roles.push({
+                id: selectedRoleId,
+                name: 'ROLE_' + selectedRole,
+                authority: 'ROLE_' + selectedRole
+            });
+        });
 
         $.ajax({
             url: '/api/admin/add-user',
@@ -266,15 +301,15 @@ $(document).ready(function() {
                 $('#addUser_email').val('');
                 $('#addUser_password').val('');
                 $('#addUser_roles').val(undefined);
+
+                $('#errorMessage').hide();
             },
             error: function (error) {
                 console.error('Error adding new user:', error);
+                $('#errorMessage').show();
             }
         });
-
     });
-
-
     // Add new user
 
     getAllUsers();

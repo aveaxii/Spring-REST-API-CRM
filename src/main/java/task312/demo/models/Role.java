@@ -13,10 +13,15 @@ public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     @Column(name = "name")
     private String name;
+
+    public Role(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public Role(String name) {
         this.name = name;
@@ -28,11 +33,11 @@ public class Role implements GrantedAuthority {
     @ManyToMany(mappedBy = "roles", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Collection<User> users;
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

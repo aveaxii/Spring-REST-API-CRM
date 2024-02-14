@@ -14,7 +14,9 @@ public interface UserService {
     void delete(Long id);
     void deleteAll();
     User findByEmail(String email);
-    boolean isUserAdmin(User user);
-    UserRepository getUserRepository();
+
+    User createRestfulUser(User user);
+    User updateRestfulUser(Long id, User user);
+    User getUserProfile();
 }
 

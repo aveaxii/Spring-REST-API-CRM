@@ -15,12 +15,10 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
-    private final UserServiceImpl userService;
 
     @Autowired
     public RoleServiceImpl(RoleRepository roleRepository, UserServiceImpl userService) {
         this.roleRepository = roleRepository;
-        this.userService = userService;
     }
 
     @Override

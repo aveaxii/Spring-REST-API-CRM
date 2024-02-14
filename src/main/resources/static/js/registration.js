@@ -8,10 +8,6 @@ $(document).ready(function() {
            birthYear: $('#birthYear').val(),
            email: $('#email').val(),
            password: $('#password').val(),
-           // roles: [
-           //     {
-           //     }
-           // ]
        };
 
        $.ajax({
@@ -20,12 +16,11 @@ $(document).ready(function() {
            data: JSON.stringify(formData),
            contentType: 'application/json',
            success: function() {
-              // window.location.href = '/auth/login';
-               console.log(formData);
+              window.location.href = '/auth/login';
            },
            error: function(error) {
                console.error(error);
-               console.log(formData);
+               $('#errorMessage').show();
            }
        });
    });

@@ -18,31 +18,32 @@
         <form id="registrationForm" class="col-3 mx-auto">
             <div class="mb-3">
                 <label for="name" class="form-label">Enter name:</label>
-                <input type="text" class="form-control mx-auto" id="name" name="name"/>
+                <input type="text" class="form-control mx-auto" id="name" name="name" required/>
             </div>
 
             <div class="mb-3">
                 <label for="surname" class="form-label">Enter surname:</label>
-                <input type="text" class="form-control mx-auto" id="surname" name="surname"/>
+                <input type="text" class="form-control mx-auto" id="surname" name="surname" required/>
             </div>
 
             <div class="mb-3">
                 <label for="birthYear" class="form-label">Enter year of birth:</label>
-                <input type="number" class="form-control mx-auto" id="birthYear" name="birthYear"/>
+                <input type="number" class="form-control mx-auto" id="birthYear" name="birthYear" required/>
             </div>
 
             <div class="mb-3">
                 <label for="email" class="form-label">Enter email:</label>
-                <input type="email" class="form-control mx-auto" id="email" name="email"/>
+                <input type="email" class="form-control mx-auto" id="email" name="email" required/>
             </div>
 
             <div class="mb-3">
                 <label for="password" class="form-label">Enter password:</label>
-                <input type="password" class="form-control mx-auto" id="password" name="password"/>
+                <input type="password" class="form-control mx-auto" id="password" name="password" required/>
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Sign up!</button>
         </form>
+        <div class="text-center mt-3" id="errorMessage" style="color: red; display: none;">User with this email already exists.</div>
 
     </div>
 </div>

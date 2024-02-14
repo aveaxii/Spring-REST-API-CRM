@@ -32,7 +32,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                     http    .csrf(csrf -> csrf.disable())
                             .authorizeHttpRequests((auth) -> auth
-                            .requestMatchers("/auth/login", "/auth/registration", "/error").permitAll()
+                            .requestMatchers("/auth/**", "/api/auth/**","/error").permitAll()
                             .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
                             .anyRequest().hasAnyRole("USER", "ADMIN")
                             )
@@ -71,4 +71,5 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers("/resouces/**","/static/**","/css/**","/js/**");
     }
+
 }

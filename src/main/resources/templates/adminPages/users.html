@@ -145,10 +145,12 @@
 
                                         <div class="mb-3 text-center">
                                             <label for="addUser_roles" class="form-label">Roles</label>
-                                            <select class="form-select mx-auto w-50" size="2" aria-label="Size 3 select example" id="addUser_roles">
+                                            <select class="form-select mx-auto w-50" size="2" aria-label="Size 3 select example" id="addUser_roles" multiple required>
                                                 <option value="ADMIN">Admin</option>
                                                 <option value="USER">User</option>
                                             </select>
+
+                                            <div class="text-center mt-3" id="errorMessage" style="color: red; display: none;">User with this credentials already exists.</div>
                                         </div>
 
                                         <button type="submit" class="btn btn-success w-15" id="addUser_submit_button">Add new user</button>
@@ -200,7 +202,7 @@
                 </div>
                 <div class="mb-3 text-center">
                     <label for="edit_roles" class="form-label">Roles</label>
-                    <select class="form-select mx-auto" size="2" aria-label="Size 3 select example" id="edit_roles" name="role">
+                    <select class="form-select mx-auto" size="2" aria-label="Size 3 select example" id="edit_roles" name="role" multiple>
                         <option value="ADMIN">Admin</option>
                         <option value="USER">User</option>
                     </select>

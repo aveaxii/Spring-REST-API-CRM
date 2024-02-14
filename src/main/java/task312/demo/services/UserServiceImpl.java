@@ -2,12 +2,20 @@ package task312.demo.services;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import task312.demo.models.Role;
 import task312.demo.models.User;
+import task312.demo.repositories.RoleRepository;
 import task312.demo.repositories.UserRepository;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,10 +25,14 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -77,18 +89,88 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public boolean isUserAdmin(User user) {
-        Optional<User> userToCheck = userRepository.findByEmail(user.getEmail());
+    @Transactional
+    public User createRestfulUser(User user) {
+        Collection<Role> roles = new ArrayList<>();
+        checkAndSetRolesCollectionForUser(roles, user);
+        user.setRoles(roles); // If the selected role is ADMIN, add ROLE_ADMIN to the user
 
-        if (userToCheck.isPresent()) {
-           return userToCheck.get().getRoles().stream().anyMatch(role -> "ROLE_ADMIN".equals(role.getName()));
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        save(user);
+
+        return user;
+    }
+
+    @Transactional
+    public User updateRestfulUser(Long id, User user) {
+        Optional<User> uncheckedUser = userRepository.findById(id);
+
+        User existingUser;
+        if (uncheckedUser.isPresent()) {
+            existingUser = uncheckedUser.get();
         } else {
-            return false;
+            throw new EntityNotFoundException();
+        }
+
+
+
+        Collection<Role> roles = new ArrayList<>();
+        checkAndSetRolesCollectionForUser(roles, user);
+        existingUser.setRoles(roles); // If the selected role is ADMIN, add ROLE_ADMIN to the user
+
+        String currentPassword = existingUser.getPassword();
+
+        existingUser.setName(user.getName());
+        existingUser.setSurname(user.getSurname());
+        existingUser.setBirthYear(user.getBirthYear());
+        existingUser.setEmail(user.getEmail());
+
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            existingUser.setPassword(currentPassword);
+        } else {
+            String newEncryptedPassword = passwordEncoder.encode(user.getPassword());
+            existingUser.setPassword(newEncryptedPassword);
+        }
+
+        update(id, existingUser);
+
+        return existingUser;
+    }
+
+    public User getUserProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        Optional<User> uncheckedUser = userRepository.findByEmail(userDetails.getUsername());
+
+        User user;
+        if (uncheckedUser.isPresent()) {
+            user = uncheckedUser.get();
+        } else {
+            throw new EntityNotFoundException();
+        }
+
+        return user;
+    }
+
+    private void checkAndSetRolesCollectionForUser(Collection<Role> roles, User user) {
+        checkIfDefaultRolesExistsOrCreateIfAbsent();
+
+        Role userRole = roleRepository.findByName("ROLE_USER").get();
+        roles.add(userRole);
+
+        if (!(user.getRoles() == null)) {
+            if (user.getRoles().stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN"))) {
+                Role adminRole = roleRepository.findByName("ROLE_ADMIN").get();
+                roles.add(adminRole);
+            }
         }
     }
 
-    public UserRepository getUserRepository() {
-        return userRepository;
+    private void checkIfDefaultRolesExistsOrCreateIfAbsent() {
+        roleRepository.findByName("ROLE_ADMIN").orElseGet(() -> roleRepository.save(new Role(1, "ROLE_ADMIN")));
+        roleRepository.findByName("ROLE_USER").orElseGet(() -> roleRepository.save(new Role(2, "ROLE_USER")));
     }
 }
