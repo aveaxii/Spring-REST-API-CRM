@@ -17,6 +17,8 @@
 ### Database setup:
 Configure [application.properties](https://github.com/aveaxii/Spring-REST-API-CRM/blob/master/src/main/resources/application.properties) or update this file with yours properties.
 
+### Note:
+- Traditional controllers are required for Tomcat using.
 
 
 
