@@ -1,4 +1,4 @@
-# Simple user management web-app 
+# RESTful CRM
 
 ### Simple user management web-app built with Spring Boot + Spring Security (Form - Based session auth.)
 
